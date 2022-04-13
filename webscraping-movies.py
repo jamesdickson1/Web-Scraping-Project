@@ -17,9 +17,45 @@ soup = BeautifulSoup(page, 'html.parser')
 
 title = soup.title
 
-print(title.text)
 ##
 ##
 ##
 ##
 
+wb = xl.Workbook()
+ms = wb.active
+ms.title = 'First Sheet'
+
+mv_table = soup.find('table')
+
+mv_rows = mv_table.findAll('tr')
+
+#print(mv_rows[1])
+
+ms['A1'] = "No."
+ms['B1'] = "Title"
+ms['C1'] = 'Gross'
+ms['D1'] = 'Total Gross'
+ms['E1'] = "Percent of Gross"
+
+ 
+
+
+wb.save('Box Office Report.xlsx')
+
+for x in range(1,6):
+    td = mv_rows[x].findAll('td')
+    rank = td[0].text
+    title = td[1].text
+    gross = int(td[5].text.replace(",","").replace("$",""))
+    t_gross = int(td[7].text.replace(",","").replace("$",""))
+
+    percent = round((gross/t_gross)*100,2)
+    
+    ms['A' + str(x+1)] = rank
+    ms['B' + str(x+1)] = title
+    ms['C' + str(x+1)] = gross
+    ms['D' + str(x+1)] = t_gross
+    ms['E' + str(x+1)] = str(percent) + "%"
+    
+    wb.save('Box Office Report.xlsx')
